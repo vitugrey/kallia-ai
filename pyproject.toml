@@ -1,0 +1,22 @@
+[project]
+name = "kallia-ai"
+version = "2.0.0"
+description = "Minha assistente virtual com conversação por LLM por voz (NÂO LOCAL) e personalidade única."
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "dotenv>=0.9.9",
+    "keyboard>=0.13.5",
+    "pyaudio>=0.2.14",
+    "assemblyai>=0.48.3",
+    "faster-whisper>=1.2.1",
+    "numpy>=2.3.5",
+    "agno>=2.3.13",
+    "tavily-python>=0.7.16",
+    "google-genai>=1.56.0",
+    "groq>=0.37.1",
+    "sqlalchemy>=2.0.45",
+    "edge-tts>=7.2.7",
+    "playsound==1.2.2",
+    "pygame>=2.6.1",
+]
