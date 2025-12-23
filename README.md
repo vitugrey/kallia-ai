@@ -57,6 +57,8 @@ Todas as configurações centralizadas em `config_bot.json`:
 - **Python**: 3.13+
 - **UV**: Gerenciador de pacotes moderno
 - **PyAudio**: Requer dependências do sistema (ver abaixo)
+- **Tesseract OCR**: Deve-se instalar o Tesseract OCR
+- 
 
 ### Windows
 ```powershell
@@ -188,3 +190,13 @@ Este projeto é de uso pessoal. Sinta-se livre para usar como inspiração, mas 
   <p><i>Desenvolvido por Vitor Grey e KaLLia 1.0</i></p>
   <p>KaLLia 2.0: "Óbvio que sou perfeita. Fui criada por mim mesma." 💅</p>
 </div>
+
+
+
+DEPLOY
+DEPLOY
+DEPLOY
+DEPLOY
+DEPLOY
+
+adicionar o ollama para ficar 100% local

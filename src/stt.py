@@ -1,20 +1,18 @@
 # ============ Importação ============= #
 import os
+import io
 import json
 import wave
 import pyaudio
 import keyboard
-import io
-from time import sleep
 import numpy as np
-
+from time import sleep
 from dotenv import load_dotenv
 from typing import Optional, List
 
-from faster_whisper import WhisperModel
 import assemblyai as aai
+from faster_whisper import WhisperModel
 
-from time_exec import time_exec
 
 # ============ Constantes ============= #
 _ = load_dotenv('.env')
@@ -26,14 +24,13 @@ class SpeechToText:
     def __init__(self):
         self.config = self._load_config("config_bot.json")
 
-
     def _load_config(self, config_path: str) -> dict:
         with open(config_path, 'r', encoding='utf-8') as f:
             config = json.load(f)
         return config.get("stt", {})
 
     def record_manual(self) -> Optional[List[bytes]]:
-        print(f"Pressione e segure '{self.config["record_key"]}' para gravar. Solte para finalizar (ou Ctrl+C para cancelar).")
+        print(f"\nPressione e segure '{self.config["record_key"]}' para gravar. Solte para finalizar (ou Ctrl+C para cancelar).\n")
         p = pyaudio.PyAudio()
         stream = p.open(
             format=pyaudio.paInt16,
@@ -77,8 +74,7 @@ class SpeechToText:
         buffer.seek(0)
         return buffer.read()
 
-# ============== Transcrição Local =============== #
-    @time_exec
+# Transcrição Local whisper
     def transcribe_whisper(self, audio_bytes: bytes, model_size: Optional[str] = None,
                            compute_type: Optional[str] = None, device: Optional[str] = None) -> Optional[str]:
         model_size = model_size or self.config["whisper_model_size"]
@@ -95,8 +91,7 @@ class SpeechToText:
             print(f"Erro na transcrição Whisper: {e}")
             return None
 
-# ============== Transcrição AssemblyAI =============== #
-    @time_exec
+# Transcrição Online AssemblyAI 
     def transcribe_assemblyai(self, audio_bytes: bytes, api_key: Optional[str] = None) -> Optional[str]:
         key = api_key or ASSEMBLYAI_API_KEY
         if not key:
@@ -113,15 +108,13 @@ class SpeechToText:
             return None
 
 
-# ============= Execução ============== #
-
-    def run(self, method: str = "assemblyai", **kwargs) -> Optional[str]:
+    def run(self, stt_provider: str = "assemblyai", **kwargs) -> Optional[str]:
         frames = self.record_manual()
         if frames:
             audio_bytes = self.get_audio_bytes(frames)
-            if method == "assemblyai":
+            if stt_provider == "assemblyai":
                 return self.transcribe_assemblyai(audio_bytes, **kwargs)
-            elif method == "whisper":
+            elif stt_provider == "whisper":
                 return self.transcribe_whisper(audio_bytes, **kwargs)
             else:
                 print("Método inválido.")
@@ -131,7 +124,7 @@ class SpeechToText:
 # ============= Execução ============== #
 if __name__ == "__main__":
     stt = SpeechToText()
-    result = stt.run(method="assemblyai")
+    result = stt.run(method="whisper")
     if result:
         print(f"Transcrição: {result}")
     else:
