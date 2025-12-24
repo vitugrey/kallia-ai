@@ -1,6 +1,6 @@
 <div align="center">
   <h1>👾 KaLLia 2.0 AI Bot 👾</h1>
-  <p><i>Assistente virtual narcisista com conversação por voz, multi-agentes e personalidade única inspirada em Neuro-sama</i></p>
+  <p><i>Um assistente virtual de conversação por voz com personalidade única</i></p>
   
   ![Python](https://img.shields.io/badge/python-3.13-blue)
   ![UV](https://img.shields.io/badge/package%20manager-UV-orange)
@@ -11,14 +11,7 @@
 
 ## 🎯 Sobre o Projeto
 
-**KaLLia 2.0** é uma assistente virtual experimental que combina reconhecimento de fala, processamento de linguagem natural via multi-agentes e síntese de voz para criar uma experiência interativa única. Desenvolvida com personalidade sarcástica e narcisista, ela utiliza um time de agentes especializados para busca na web e execução local.
-
-### Arquitetura Multi-Agente
-
-O projeto usa o framework **Agno** com uma estrutura de **Team** composta por:
-- **KaLLia Team Leader**: Coordena as respostas e mantém a personalidade
-- **KaLLia_SEARCH**: Busca informações na web via Tavily
-- **KaLLia_LOCAL_EXECUTOR**: Executa comandos e automações locais
+**KaLLia 2.0** é uma assistente virtual experimental que combina reconhecimento de fala, processamento de linguagem natural e síntese de voz para criar uma experiência interativa única. Desenvolvida para que o dev não fique sozinho codando, ela utiliza um agente com tools de busca na web e execução local para otimizar o tempo.
 
 ---
 
@@ -33,14 +26,18 @@ O projeto usa o framework **Agno** com uma estrutura de **Team** composta por:
 ### 🔊 Text-to-Speech (TTS)
 - **Engine**: Edge-TTS (voz pt-BR-FranciscaNeural)
 - **Streaming**: Reprodução direta da memória via pygame
-- **Configurável**: Vozes customizáveis via `config_bot.json`
 
 ### 🧠 Large Language Model (LLM)
-- **Framework**: Agno (multi-agente)
-- **Modelos**: Suporte para Gemini (Google) e Groq
-- **Memória**: Persistência via SQLite com session_id
-- **Team**: Sistema de colaboração entre agentes especializados
+- **Framework**: Agno (agentes inteligentes com memória persistente)
+- **Modelos**: Suporte para Gemini (Google), Groq e Ollama
+- **Memória**: Persistência via SQLite (sessions, memories, knowledge)
+- **Histórico**: Último **5** runs de histórico de conversação
 - **Tools**: Tavily Web Search integrado
+
+### 🔍 RAG (Retrieval-Augmented Generation)
+- **Vector DB**: LanceDB com embeddings locais (Ollama nomic-embed-text)
+- **Knowledge Base**: Sistema de knowledge persistente para documentos
+- **Local**: Embeddings 100% locais via Ollama
 
 ### 🔧 Configuração Externa
 Todas as configurações centralizadas em `config_bot.json`:
@@ -51,20 +48,22 @@ Todas as configurações centralizadas em `config_bot.json`:
 
 ---
 
-## 🚀 Instalação e Execução
+### 🚀 Instalação e Execução
 
 ### Pré-requisitos
 - **Python**: 3.13+
 - **UV**: Gerenciador de pacotes moderno
 - **PyAudio**: Requer dependências do sistema (ver abaixo)
-- **Tesseract OCR**: Deve-se instalar o Tesseract OCR
-- 
+- **Ollama**: Para embeddings locais (instalar em [ollama.com](https://ollama.com))
 
 ### Windows
 ```powershell
 # Clone o repositório
 git clone https://github.com/vitugrey/kallia-ai
 cd kallia-ai
+
+# Instale Ollama (https://ollama.com) e puxe o modelo:
+ollama pull nomic-embed-text
 
 # Instalar dependências com UV
 uv sync
@@ -88,61 +87,10 @@ sudo apt-get install portaudio19-dev python3-pyaudio
 # MacOS:
 brew install portaudio
 
+# Instale Ollama e puxe o modelo:
+ollama pull nomic-embed-text
+
 # Seguir mesmos passos do Windows
-```
-
----
-
-## 📁 Estrutura do Projeto
-
-```
-kallia-ai/
-├── src/
-│   ├── assistentbot.py    # Orquestrador principal
-│   ├── stt.py              # Speech-to-Text (Whisper + AssemblyAI)
-│   ├── tts.py              # Text-to-Speech (Edge-TTS)
-│   ├── llm.py              # Multi-agente (Agno)
-│   └── time_exec.py        # Decorador para métricas
-├── data/
-│   └──agents.db           # Banco SQLite (memória dos agentes)
- temporários
-├── config_bot.json         # Configuração centralizada
-├── pyproject.toml          # Dependências (UV)
-└── README.md
-```
-
----
-
-## ⚙️ Configuração
-
-### config_bot.json
-```json
-{
-  "stt": {
-    "record_key": "CAPS_LOCK",
-    "whisper_model_size": "small",
-    "whisper_device": "cpu"
-  },
-  "tts": {
-    "voice": "pt-BR-FranciscaNeural"
-  },
-  "llm": {
-    "team": {
-      "name": "KaLLia Team",
-      "model_teams": "qwen/qwen3-32b",
-      "instruction_team": "Sua personalidade aqui...",
-      "agents": [...]
-    }
-  }
-}
-```
-
-### Variáveis de Ambiente (.env)
-```env
-GOOGLE_API_KEY=sua_chave_google
-GROQ_API_KEY=sua_chave_groq
-TAVILY_API_KEY=sua_chave_tavily
-ASSEMBLYAI_API_KEY=sua_chave_assemblyai  # Opcional
 ```
 
 ---
@@ -166,37 +114,55 @@ ASSEMBLYAI_API_KEY=sua_chave_assemblyai  # Opcional
 |------------|------------|-----|
 | **STT** | [Faster-Whisper](https://github.com/SYSTRAN/faster-whisper) | Transcrição local |
 | **STT Cloud** | [AssemblyAI](https://www.assemblyai.com) | Transcrição online rápida |
-| **LLM Framework** | [Agno](https://docs.agno.com) | Multi-agente + memória |
-| **LLM Models** | Google Gemini, Groq | Geração de texto |
+| **LLM Framework** | [Agno](https://docs.agno.com) | Agentes com memória persistente |
+| **LLM Models** | Google Gemini, Groq, Ollama | Geração de texto |
+| **RAG/Vector DB** | [LanceDB](https://lancedb.com) | Vector database eficiente |
+| **Embeddings** | [Ollama](https://ollama.com) | Embeddings 100% locais |
 | **TTS** | [Edge-TTS](https://github.com/rany2/edge-tts) | Síntese de voz |
-| **Tools** | [Tavily](https://tavily.com) | Web search |
+| **Web Search** | [Tavily](https://tavily.com) | Web search API |
 | **Audio** | PyAudio, pygame | Captura e reprodução |
+| **UI** | Art | ASCII art display |
 
 ---
 
-## 🤝 Contribuições
+## � Roadmap & Features Planejadas
 
-Este é um projeto pessoal/experimental. Sugestões e feedback são bem-vindos via Issues.
+### 🎯 Alta Prioridade
+
+- [ ] **Modo Offline Total**: Rodar 100% local sem dependências de APIs externas
+- [ ] **Tool de Automação Local**: Sistema completo para abrir programas, executar comandos e automações Windows/Linux
+- [ ] **Gestão de Context Window**: Sistema inteligente para gerenciar limite de tokens e sumarização de histórico
+- [ ] **Multi-modal**: Suporte para visão (análise de imagens/screenshots)
+- [ ] **Streaming TTS**: Síntese de voz em streaming para respostas mais rápidas e voz personalizada
+- [ ] **Interface Gráfica**: Dashboard para configuração e monitoramento
+- [ ] **Otimização de Memória**: Cache inteligente e gestão eficiente de recursos
+- [ ] **Containerização**: Docker para deploy simplificado
 
 ---
 
-## 📄 Licença
+## �💬 Comentario do Dev
 
-Este projeto é de uso pessoal. Sinta-se livre para usar como inspiração, mas respeite as licenças das bibliotecas utilizadas.
-
----
-
-<div align="center">
-  <p><i>Desenvolvido por Vitor Grey e KaLLia 1.0</i></p>
-  <p>KaLLia 2.0: "Óbvio que sou perfeita. Fui criada por mim mesma." 💅</p>
-</div>
-
-
-
-DEPLOY
-DEPLOY
-DEPLOY
-DEPLOY
-DEPLOY
-
-adicionar o ollama para ficar 100% local
+<table>
+  <tr>
+    <td>
+      <img src="data\image-de-vitor-de-oculos-com-fundo-verde.jpeg" width="100px" />
+    </td>
+    <td>
+      Escrito por <a href="https://github.com/vitugrey">Vitor Grey.</a>
+    </td>
+    <td>
+      <i>Devido ficar muito tempo sem interagir socialmente fiz essa aberração para me destrair enquanto fico no PC. </i>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <img src="data\imagem-real-da-kallia.ico" width="100px" />
+    </td>
+    <td>
+      Feito por <a href="#">Kallia 1.0.</a>
+    </td>
+    <td>
+      <i>Obivio que sou perfeira! Fui feita por mim mesma.</i>
+    </td>
+  </tr>
+</table>
