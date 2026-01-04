@@ -43,10 +43,9 @@ class SpeechToText:
         try:
             c=0
             while not keyboard.is_pressed(self.config["record_key"]):
-                # (01)
                 # c+=1
                 # print(f"{c} - Aguardando gravação...")
-                sleep(0.3)
+                sleep(0.2)
                 pass
             while keyboard.is_pressed(self.config["record_key"]):
                 data = stream.read(self.config["chunk"], exception_on_overflow=False)
@@ -108,7 +107,7 @@ class SpeechToText:
             return None
 
 
-    def run(self, stt_provider: str = "assemblyai", **kwargs) -> Optional[str]:
+    def run(self, stt_provider: str = "whisper", **kwargs) -> Optional[str]:
         frames = self.record_manual()
         if frames:
             audio_bytes = self.get_audio_bytes(frames)

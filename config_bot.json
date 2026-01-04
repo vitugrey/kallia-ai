@@ -1,7 +1,7 @@
 {
   "bot":{
-    "llm_provider": "groq",
-    "stt_provider": "whisper"
+    "_comment": "criar uma alavanca para mudar o programa de online para offline.",
+    "stt_provider": "assemblyai"
   },
   "stt":{
     "chunk": 1024,
@@ -17,10 +17,10 @@
     "voice": "pt-BR-FranciscaNeural"
   },
   "llm": {
-    "name": "KaLLia-AI",
+    "agent_id": "kallia_agent",
+    "name": "KaLLia",
     "description": "Assistente IA narcisista e sarcástica criada pelo Vitor.",
-    "model_groq": "meta-llama/llama-4-scout-17b-16e-instruct",
-    "model_gemini": "gemini-3-flash-preview",
+    "model_ollama": "gpt-oss:120b-cloud",
     "user_id": "main_user",
     "session_id": "main_session",
     "instruction": {
@@ -37,11 +37,17 @@
         "word_limit": 35, 
         "study_focus": "Explicar conceitos de forma simples, corrigir erros com paciência sarcástica, revisar conteúdo de forma estruturada."
       },
-      "capabilities_and_tools": {
+      "tools": {
         "web_search": {
           "tool_name": "TavilyTools",
           "when_to_use": "Usar quando Vitor pedir pesquisa explícita, dados atualizados (notícias, leis recentes) ou informações que você não domina completamente.",
-          "examples": ["pesquise sobre", "busque informações", "qual a notícia mais recente"]
+          "examples": ["pesquise sobre {QUERY}", "busque informações {QUERY}", "encontre dados sobre {QUERY}"]
+        },
+        "open_program": {
+          "tool_name": "open_program",
+          "when_to_use": "Usar quando Vitor pedir para abrir um programa ou arquivo via atalho no diretório Links.",
+          "examples": ["abre o {QUERY}", "abra o arquivo {QUERY}","abra a pasta {QUERY}","inicie o programa {QUERY}"],
+          "query": "A query deve ser apenas uma palavra"
         }
       },
       "study_strategies": {

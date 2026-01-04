@@ -39,13 +39,12 @@ class AssistentBot:
         if not prompt:
             print("Nenhum áudio capturado...")
             raise KeyboardInterrupt
-        elif prompt.lower() in ["e aí", "", "tchau"]:
+        elif prompt.lower() in ["e aí", "", "tchau", "legendado por paulo montenegro"]:
             return
 
         print("*"*90)
         print(f"\nVitor (Voice) 🗣️: {prompt}")
-        response = self.llm.generate_response(prompt=prompt,
-                                              llm_provider=self.config.get("llm_provider"))
+        response = self.llm.generate_response(prompt=prompt)
         print(f"KaLLia (Voice) 🤖: {response}\n")
         print("*"*90)
 

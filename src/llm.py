@@ -4,23 +4,22 @@ import json
 from dotenv import load_dotenv
 
 from agno.agent import Agent
-from agno.models.google import Gemini
-from agno.models.groq import Groq
+from agno.models.ollama import Ollama
 from agno.db.sqlite import SqliteDb
 from agno.tools.tavily import TavilyTools
 
-from tools import knowledge
+from tools import knowledge, open_program
 
 
 # ============ Constantes ============ #
 _ = load_dotenv('.env')
-GROQ_API_KEY = os.getenv('GROQ_API_KEY')
-GOOGLE_API_KEY = os.getenv('GOOGLE_API_KEY')
+OLLAMA_API_KEY = os.getenv('OLLAMA_API_KEY')
 TAVILY_API_KEY = os.getenv('TAVILY_API_KEY')
 DB = SqliteDb(
     db_file="data/agents.db",
     session_table="kallia_sessions",
-    memory_table="kallia_memories"
+    memory_table="kallia_memories",
+    knowledge_table="kallia_knowledge"
 )
 
 
@@ -29,7 +28,10 @@ class LanguageLargeModel:
     def __init__(self):
         self.config = self._load_config("config_bot.json")
 
-        self.tools = [TavilyTools(api_key=TAVILY_API_KEY)]
+        self.tools = [
+            TavilyTools(api_key=TAVILY_API_KEY),
+            open_program
+        ]
         self.agent = None
 
     def _load_config(self, config_path: str) -> dict:
@@ -37,29 +39,25 @@ class LanguageLargeModel:
             config = json.load(f)
         return config.get("llm", {})
 
-    def create_agent(self,
-                     model: str = "groq",
-                     instructions: str = None,
-                     tools: list = None,
-                     description: str = None,
-                     name: str = "agent") -> Agent:
+    def create_agent(self) -> Agent:
+        model_ollama = self.config.get("model_ollama", "ministral-3:3b")
 
-        if model.lower() == "groq":
-            model = Groq(
-                api_key=GROQ_API_KEY,
-                id=self.config.get("model_groq", "openai/gpt-oss-120b"))
-        elif model.lower() == "gemini":
-            model = Gemini(
-                api_key=GOOGLE_API_KEY,
-                id=self.config.get("model_gemini", "gemini-3-flash-preview"))
+        if model_ollama:
+            model = Ollama(
+                id=model_ollama,
+                api_key=OLLAMA_API_KEY
+            )
         else:
-            raise ValueError(f"Modelo desconhecido: {model}")
+            raise ValueError(f"Modelo ollama desconhecido: {model_ollama}")
 
         agent = Agent(
-            model=model,
-            instructions=instructions,
-            tools=tools or [],
+            id=self.config.get("agent_id"),
+            name=self.config.get("name"),
+            description=self.config.get("description"),
 
+            model=model,
+            instructions=str(self.config.get("instruction")),
+            tools=self.tools or [],
             knowledge=knowledge,
             search_knowledge=True,
 
@@ -70,27 +68,17 @@ class LanguageLargeModel:
             add_memories_to_context=True,
             add_datetime_to_context=True,
             add_name_to_context=True,
-
-            id=name,
-            name=name,
-            description=description,
         )
 
         self.agent = agent
         return agent
 
-    def generate_response(self, prompt: str, llm_provider: str = "gemini") -> str:
+    def generate_response(self, prompt: str) -> str:
         if not prompt:
             return
 
         if not self.agent:
-            self.create_agent(
-                model=llm_provider,
-                instructions=str(self.config.get("instruction")),
-                name=self.config.get("name"),
-                description=self.config.get("description"),
-                tools=self.tools
-            )
+            self.create_agent()
 
         response = self.agent.run(
             input=prompt,
@@ -108,6 +96,6 @@ class LanguageLargeModel:
 # ============= Execução ============== #
 if __name__ == "__main__":
     llm = LanguageLargeModel()
-    prompt = "oi tudo bem?"
-    response = llm.generate_response(prompt)
+    prompt = "reabra o programa projeto"
+    response = llm.generate_response(prompt=prompt)
     print(f"Resposta: {response}")

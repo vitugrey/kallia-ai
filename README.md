@@ -11,7 +11,7 @@
 
 ## 🎯 Sobre o Projeto
 
-**KaLLia 2.0** é uma assistente virtual experimental que combina reconhecimento de fala, processamento de linguagem natural e síntese de voz para criar uma experiência interativa única. Desenvolvida para que o dev não fique sozinho codando, ela utiliza um agente com tools de busca na web e execução local para otimizar o tempo.
+**KaLLia 2.0** é uma assistente virtual experimental que combina reconhecimento de fala, processamento de linguagem natural e síntese de voz para criar uma experiência interativa única. Funciona **online (rápido)** ou **100% local (Ollama)**, sendo que a velocidade de resposta e taxa de alucinações dependem diretamente da potência do hardware e do modelo utilizado.
 
 ---
 
@@ -29,22 +29,21 @@
 
 ### 🧠 Large Language Model (LLM)
 - **Framework**: Agno (agentes inteligentes com memória persistente)
-- **Modelos**: Suporte para Gemini (Google), Groq e Ollama
-- **Memória**: Persistência via SQLite (sessions, memories, knowledge)
-- **Histórico**: Último **5** runs de histórico de conversação
-- **Tools**: Tavily Web Search integrado
+- **Modelo**: Ollama (ex.: ministral-3:3b / gpt-oss:120b-cloud)
+- **Memória**: Persistência via SQLite (sessions, memories)
+- **Histórico**: Último **5** runs de conversação
+- **Tools**: Tavily Web Search, Open Program (atalhos .lnk)
 
 ### 🔍 RAG (Retrieval-Augmented Generation)
 - **Vector DB**: LanceDB com embeddings locais (Ollama nomic-embed-text)
-- **Knowledge Base**: Sistema de knowledge persistente para documentos
-- **Local**: Embeddings 100% locais via Ollama
+- **Local**  Embeddings 100% locais via Ollama
 
 ### 🔧 Configuração Externa
-Todas as configurações centralizadas em `config_bot.json`:
-- Parâmetros de STT (modelo Whisper, taxa de amostragem)
-- Configurações de TTS (voz, diretório)
-- Instruções e personalidade dos agentes
-- Modelos de LLM e configurações de team
+Tudo configurável no `config_bot.json`:
+- STT: modelo Whisper, taxa de amostragem, tecla de gravação
+- TTS: voz, diretório
+- LLM: modelo Ollama (local/online) e instruções
+- Instruções: Personalidade e comportamento da KaLLia
 
 ---
 
@@ -54,24 +53,22 @@ Todas as configurações centralizadas em `config_bot.json`:
 - **Python**: 3.13+
 - **UV**: Gerenciador de pacotes moderno
 - **PyAudio**: Requer dependências do sistema (ver abaixo)
-- **Ollama**: Para embeddings locais (instalar em [ollama.com](https://ollama.com))
+- **Ollama**: Para rodar o modelo local (instalar em [ollama.com](https://ollama.com))
 
 ### Windows
-```powershell
+```bash
 # Clone o repositório
 git clone https://github.com/vitugrey/kallia-ai
 cd kallia-ai
 
-# Instale Ollama (https://ollama.com) e puxe o modelo:
-ollama pull nomic-embed-text
+# Instale Ollama (https://ollama.com) e puxe o modelo principal:
+ollama pull gpt-oss:120b-cloud
 
 # Instalar dependências com UV
 uv sync
 
-# Configurar variáveis de ambiente
-# Crie um arquivo .env com:
-# GOOGLE_API_KEY=sua_chave_aqui
-# GROQ_API_KEY=sua_chave_aqui
+# Configurar variáveis de ambiente (apenas se usar serviços externos; modo local não precisa)
+# OLLAMA_API_KEY=sua_chave_aqui
 # TAVILY_API_KEY=sua_chave_aqui
 # ASSEMBLYAI_API_KEY=sua_chave_aqui (opcional)
 
@@ -88,9 +85,9 @@ sudo apt-get install portaudio19-dev python3-pyaudio
 brew install portaudio
 
 # Instale Ollama e puxe o modelo:
-ollama pull nomic-embed-text
-
-# Seguir mesmos passos do Windows
+ollama pull ministral-3:3b
+# or
+ollama pull gpt-oss:120b-cloud # online
 ```
 
 ---
@@ -103,8 +100,8 @@ ollama pull nomic-embed-text
 4. O bot responde via voz sintetizada
 
 ### Comandos Especiais
-- "Abra [programa]": Abre programas configurados
-- "Pesquise [termo]": Aciona busca web via agente KaLLia_SEARCH
+- "Pesquise [termo]": Aciona busca web via API Tavily
+- "Abra [programa]": Abre programas via atalhos (.lnk) no diretório ~/Links (ex: "Abra o vscode")
 
 ---
 
@@ -115,22 +112,19 @@ ollama pull nomic-embed-text
 | **STT** | [Faster-Whisper](https://github.com/SYSTRAN/faster-whisper) | Transcrição local |
 | **STT Cloud** | [AssemblyAI](https://www.assemblyai.com) | Transcrição online rápida |
 | **LLM Framework** | [Agno](https://docs.agno.com) | Agentes com memória persistente |
-| **LLM Models** | Google Gemini, Groq, Ollama | Geração de texto |
+| **LLM Models** | [Ollama](https://ollama.com) | Geração de texto |
 | **RAG/Vector DB** | [LanceDB](https://lancedb.com) | Vector database eficiente |
 | **Embeddings** | [Ollama](https://ollama.com) | Embeddings 100% locais |
 | **TTS** | [Edge-TTS](https://github.com/rany2/edge-tts) | Síntese de voz |
-| **Web Search** | [Tavily](https://tavily.com) | Web search API |
+| **Web Search** | [Tavily](https://tavily.com)  | Web search API |
+| **Automação Local** | Open program | Abre atalhos .lnk de ~/Links |
 | **Audio** | PyAudio, pygame | Captura e reprodução |
 | **UI** | Art | ASCII art display |
 
 ---
 
-## � Roadmap & Features Planejadas
+## 🎯 Roadmap & Features Planejadas
 
-### 🎯 Alta Prioridade
-
-- [ ] **Modo Offline Total**: Rodar 100% local sem dependências de APIs externas
-- [ ] **Tool de Automação Local**: Sistema completo para abrir programas, executar comandos e automações Windows/Linux
 - [ ] **Gestão de Context Window**: Sistema inteligente para gerenciar limite de tokens e sumarização de histórico
 - [ ] **Multi-modal**: Suporte para visão (análise de imagens/screenshots)
 - [ ] **Streaming TTS**: Síntese de voz em streaming para respostas mais rápidas e voz personalizada
@@ -140,7 +134,7 @@ ollama pull nomic-embed-text
 
 ---
 
-## �💬 Comentario do Dev
+#### 💬 Comentario dos Devs
 
 <table>
   <tr>
@@ -162,7 +156,7 @@ ollama pull nomic-embed-text
       Feito por <a href="#">Kallia 1.0.</a>
     </td>
     <td>
-      <i>Obivio que sou perfeira! Fui feita por mim mesma.</i>
+      <i>Óbvio que sou perfeira! Fui feita por mim mesma.</i>
     </td>
   </tr>
 </table>
