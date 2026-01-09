@@ -125,11 +125,11 @@ ollama pull gpt-oss:120b-cloud # online
 
 ## 🎯 Roadmap & Features Planejadas
 
-- [ ] **Gestão de Context Window**: Sistema inteligente para gerenciar limite de tokens e sumarização de histórico
+- [x] **Gestão de Context Window**: Sistema inteligente para gerenciar limite de tokens e sumarização de histórico
 - [ ] **Multi-modal**: Suporte para visão (análise de imagens/screenshots)
 - [ ] **Streaming TTS**: Síntese de voz em streaming para respostas mais rápidas e voz personalizada
 - [ ] **Interface Gráfica**: Dashboard para configuração e monitoramento
-- [ ] **Otimização de Memória**: Cache inteligente e gestão eficiente de recursos
+- [x] **Otimização de Memória**: Cache inteligente e gestão eficiente de recursos
 - [ ] **Containerização**: Docker para deploy simplificado
 
 ---

@@ -8,7 +8,7 @@ from agno.models.ollama import Ollama
 from agno.db.sqlite import SqliteDb
 from agno.tools.tavily import TavilyTools
 
-from tools import knowledge, open_program
+from .tools import knowledge, open_program
 
 
 # ============ Constantes ============ #
@@ -66,7 +66,11 @@ class LanguageLargeModel:
             num_history_runs=5,
             enable_user_memories=True,
             add_memories_to_context=True,
+            enable_session_summaries=True,
+            add_session_summary_to_context=True,
+            
             add_datetime_to_context=True,
+            add_location_to_context=True,
             add_name_to_context=True,
         )
 

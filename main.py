@@ -1,10 +1,20 @@
-from agno.agent import Agent
-from agno.models.ollama import Ollama
+import os
+import  warnings
 
-agent = Agent(
-    model=Ollama(id="ministral-3:3b", host="http://localhost:11434/"),
-    markdown=True
-)
+warnings.filterwarnings("ignore", category=UserWarning, module="pygame.pkgdata")
+os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = '1'
 
-# Print the response in the terminal
-agent.print_response("Share a 2 sentence horror story.")
+from time import sleep
+from src.assistentbot import AssistentBot
+
+if __name__ == "__main__":
+    bot = AssistentBot()
+    try:
+        while True:
+            bot.run()
+    except KeyboardInterrupt:
+        print("\nEncerrando o KaLLia-AI. Até a próxima!")
+        sleep(5)
+        print("\nEu voltarei...")
+        sleep(1)
+

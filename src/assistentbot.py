@@ -5,9 +5,9 @@ from dotenv import load_dotenv
 
 from art import text2art
 
-from llm import LanguageLargeModel
-from stt import SpeechToText
-from tts import TextToSpeech
+from .llm import LanguageLargeModel
+from .stt import SpeechToText
+from .tts import TextToSpeech
 
 
 # ============ Constantes ============ #
@@ -22,7 +22,7 @@ class AssistentBot:
         self.stt = SpeechToText()
         self.llm = LanguageLargeModel()
         self.tts = TextToSpeech()
-
+        
         os.system('cls' if os.name == 'nt' else 'clear')
         print(text2art("KaLLia-AI", space=4))
 
@@ -37,7 +37,6 @@ class AssistentBot:
         )
 
         if not prompt:
-            print("Nenhum áudio capturado...")
             raise KeyboardInterrupt
         elif prompt.lower() in ["e aí", "", "tchau", "legendado por paulo montenegro"]:
             return
