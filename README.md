@@ -125,8 +125,9 @@ ollama pull gpt-oss:120b-cloud # online
 
 ## 🎯 Roadmap & Features Planejadas
 
+- [ ] **Vida própia**: Iniciar conversações sozinha
 - [x] **Gestão de Context Window**: Sistema inteligente para gerenciar limite de tokens e sumarização de histórico
-- [ ] **Multi-modal**: Suporte para visão (análise de imagens/screenshots)
+- [x] **Multi-modal**: Suporte para visão (análise de imagens/screenshots)
 - [ ] **Streaming TTS**: Síntese de voz em streaming para respostas mais rápidas e voz personalizada
 - [ ] **Interface Gráfica**: Dashboard para configuração e monitoramento
 - [x] **Otimização de Memória**: Cache inteligente e gestão eficiente de recursos

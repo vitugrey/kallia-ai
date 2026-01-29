@@ -1,12 +1,18 @@
 # ============ Importação ============ #
 import os
 from dotenv import load_dotenv
+from typing import Optional, Sequence
 
 from agno.knowledge.knowledge import Knowledge
 from agno.vectordb.lancedb import LanceDb
 from agno.knowledge.embedder.ollama import OllamaEmbedder
 from agno.db.sqlite import SqliteDb
+from agno.agent import Agent
+from agno.media import Image
+from agno.tools.function import ToolResult
 
+import pyautogui
+from io import BytesIO
 
 # ============ Constantes ============ #
 _ = load_dotenv('.env')
@@ -66,6 +72,19 @@ def open_program(query: str) -> str:
             except Exception as e:
                 return f"Erro ao abrir o programa '{query}': {e}"
 
+
+def capture_screenshot() -> ToolResult:
+    """Captura um screenshot da tela do usuário para análise visual.
+
+    Returns:
+        ToolResult: Contém a imagem capturada para análise pelo modelo.
+    """
+    screenshot = pyautogui.screenshot()
+    screenshot.save("data/screenshot.png")
+    return ToolResult(
+        content="Screenshot capturado. Analisando a imagem...",
+        images=[Image(filepath="data/screenshot.png")]
+    )
 
 # ============= Execução ============== #
 if __name__ == "__main__":

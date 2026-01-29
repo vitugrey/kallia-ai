@@ -1,6 +1,7 @@
 # ============ IMPORTAÇÕES ============ #
 import os
 import json
+import time
 from dotenv import load_dotenv
 
 from art import text2art
@@ -25,15 +26,16 @@ class AssistentBot:
         
         os.system('cls' if os.name == 'nt' else 'clear')
         print(text2art("KaLLia-AI", space=4))
+        print(self.config.get("llm").get("instruction").get("role"))
 
     def _load_config(self, config_path: str) -> dict:
         with open(config_path, 'r', encoding='utf-8') as f:
             config = json.load(f)
-        return config.get("bot", {})
+        return config
 
     def run(self):
         prompt = self.stt.run(
-            stt_provider=self.config.get("stt_provider")
+            stt_provider=self.config.get("stt").get("stt_provider")
         )
 
         if not prompt:
@@ -48,6 +50,22 @@ class AssistentBot:
         print("*"*90)
 
         self.tts.convert_with_edge_tts(response)
+
+    def _run_in_background(self):
+        
+        prompt = "faça uma pergunta aleatória."
+
+        print("*"*90)
+        print(f"\nVitor (Mente) 🗣️: {prompt}")
+        response = self.llm.generate_response(prompt=prompt)
+        print(f"KaLLia (Voice) 🤖: {response}\n")
+        print("*"*90)
+
+        self.tts.convert_with_edge_tts(response)
+
+        time.sleep(500)
+
+
 
 
 # ============ Execução ============ #

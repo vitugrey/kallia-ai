@@ -8,7 +8,7 @@ from agno.models.ollama import Ollama
 from agno.db.sqlite import SqliteDb
 from agno.tools.tavily import TavilyTools
 
-from .tools import knowledge, open_program
+from .tools import knowledge, open_program, capture_screenshot
 
 
 # ============ Constantes ============ #
@@ -30,17 +30,18 @@ class LanguageLargeModel:
 
         self.tools = [
             TavilyTools(api_key=TAVILY_API_KEY),
-            open_program
+            open_program,
+            capture_screenshot,
         ]
         self.agent = None
 
     def _load_config(self, config_path: str) -> dict:
         with open(config_path, 'r', encoding='utf-8') as f:
             config = json.load(f)
-        return config.get("llm", {})
+        return config.get("llm")
 
     def create_agent(self) -> Agent:
-        model_ollama = self.config.get("model_ollama", "ministral-3:3b")
+        model_ollama = self.config.get("model_ollama", "gpt-oss:120b-cloud")
 
         if model_ollama:
             model = Ollama(
@@ -66,8 +67,8 @@ class LanguageLargeModel:
             num_history_runs=5,
             enable_user_memories=True,
             add_memories_to_context=True,
-            enable_session_summaries=True,
-            add_session_summary_to_context=True,
+            enable_session_summaries=False,
+            add_session_summary_to_context=False,
             
             add_datetime_to_context=True,
             add_location_to_context=True,
@@ -77,7 +78,7 @@ class LanguageLargeModel:
         self.agent = agent
         return agent
 
-    def generate_response(self, prompt: str) -> str:
+    def generate_response(self, prompt: str, ) -> str:
         if not prompt:
             return
 
@@ -100,6 +101,6 @@ class LanguageLargeModel:
 # ============= Execução ============== #
 if __name__ == "__main__":
     llm = LanguageLargeModel()
-    prompt = "reabra o programa projeto"
+    prompt = "Você sabe o que tem na minha tela"
     response = llm.generate_response(prompt=prompt)
     print(f"Resposta: {response}")

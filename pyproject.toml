@@ -22,4 +22,5 @@ dependencies = [
     "lancedb>=0.8.0",
     "pandas>=2.3.3",
     "ollama>=0.6.1",
+    "pyautogui>=0.9.54",
 ]
