@@ -32,7 +32,7 @@
 - **Modelo**: Ollama (ex.: ministral-3:3b / gpt-oss:120b-cloud)
 - **Memória**: Persistência via SQLite (sessions, memories)
 - **Histórico**: Último **5** runs de conversação
-- **Tools**: Tavily Web Search, Open Program (atalhos .lnk)
+- **Tools**: Tavily Web Search, Open Program (atalhos .lnk), capture_screenshot
 
 ### 🔍 RAG (Retrieval-Augmented Generation)
 - **Vector DB**: LanceDB com embeddings locais (Ollama nomic-embed-text)
@@ -118,6 +118,7 @@ ollama pull gpt-oss:120b-cloud # online
 | **TTS** | [Edge-TTS](https://github.com/rany2/edge-tts) | Síntese de voz |
 | **Web Search** | [Tavily](https://tavily.com)  | Web search API |
 | **Automação Local** | Open program | Abre atalhos .lnk de ~/Links |
+| **Multi-Modal** | Capture Screenshot | Tool para adicionar a tela no contexto |
 | **Audio** | PyAudio, pygame | Captura e reprodução |
 | **UI** | Art | ASCII art display |
 
@@ -125,10 +126,9 @@ ollama pull gpt-oss:120b-cloud # online
 
 ## 🎯 Roadmap & Features Planejadas
 
-- [ ] **Vida própia**: Iniciar conversações sozinha
+- [x] **Vida própia**: Iniciar conversações sozinha
 - [x] **Gestão de Context Window**: Sistema inteligente para gerenciar limite de tokens e sumarização de histórico
 - [x] **Multi-modal**: Suporte para visão (análise de imagens/screenshots)
-- [ ] **Streaming TTS**: Síntese de voz em streaming para respostas mais rápidas e voz personalizada
 - [ ] **Interface Gráfica**: Dashboard para configuração e monitoramento
 - [x] **Otimização de Memória**: Cache inteligente e gestão eficiente de recursos
 - [ ] **Containerização**: Docker para deploy simplificado

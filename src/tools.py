@@ -1,18 +1,16 @@
 # ============ Importação ============ #
 import os
+import pyautogui
 from dotenv import load_dotenv
-from typing import Optional, Sequence
 
-from agno.knowledge.knowledge import Knowledge
-from agno.vectordb.lancedb import LanceDb
 from agno.knowledge.embedder.ollama import OllamaEmbedder
+from agno.knowledge.knowledge import Knowledge
+from agno.tools.function import ToolResult
+from agno.vectordb.lancedb import LanceDb
 from agno.db.sqlite import SqliteDb
 from agno.agent import Agent
 from agno.media import Image
-from agno.tools.function import ToolResult
 
-import pyautogui
-from io import BytesIO
 
 # ============ Constantes ============ #
 _ = load_dotenv('.env')

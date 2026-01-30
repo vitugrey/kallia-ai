@@ -2,13 +2,15 @@
 import os
 import json
 import time
+import random
+import threading
 from dotenv import load_dotenv
 
 from art import text2art
 
-from .llm import LanguageLargeModel
 from .stt import SpeechToText
 from .tts import TextToSpeech
+from .llm import LanguageLargeModel
 
 
 # ============ Constantes ============ #
@@ -23,7 +25,7 @@ class AssistentBot:
         self.stt = SpeechToText()
         self.llm = LanguageLargeModel()
         self.tts = TextToSpeech()
-        
+
         os.system('cls' if os.name == 'nt' else 'clear')
         print(text2art("KaLLia-AI", space=4))
         print(self.config.get("llm").get("instruction").get("role"))
@@ -33,39 +35,54 @@ class AssistentBot:
             config = json.load(f)
         return config
 
+    def generate(self):
+        while True:
+            try:
+                prompt = self.stt.run(
+                    stt_provider=self.config.get("stt").get("stt_provider")
+                )
+
+                if not prompt:
+                    raise KeyboardInterrupt
+                elif prompt.lower() in ["e aí", "", "tchau", "legendado por paulo montenegro"]:
+                    return
+
+                print("*"*90)
+                print(f"\nVitor (Voice) 🗣️: {prompt}")
+                response = self.llm.generate_response(prompt=prompt)
+                print(f"KaLLia (Voice) 🤖: {response}\n")
+                print("*"*90)
+
+                self.tts.convert_with_edge_tts(response)
+            except KeyboardInterrupt:
+                raise
+
+    def skill_in_background(self):
+        while True:
+            try:
+                skills = self.config.get("skill", [])
+                prompt = random.choice(skills) if skills else None
+                if not prompt:
+                    time.sleep(10)
+                    continue
+
+                print("*"*90)
+                print(f"\nVitor (Mente) 🗣️: {prompt}")
+                response = self.llm.generate_response(prompt=prompt)
+                print(f"KaLLia (Voice) 🤖: {response}\n")
+                print("*"*90)
+                time.sleep(2)
+                print(f"\nPressione e segure 'CAPS_LOOK' para gravar. Solte para finalizar (ou Ctrl+C para cancelar).\n")
+
+                self.tts.convert_with_edge_tts(response)
+
+                time.sleep(500)
+            except KeyboardInterrupt:
+                raise
+
     def run(self):
-        prompt = self.stt.run(
-            stt_provider=self.config.get("stt").get("stt_provider")
-        )
-
-        if not prompt:
-            raise KeyboardInterrupt
-        elif prompt.lower() in ["e aí", "", "tchau", "legendado por paulo montenegro"]:
-            return
-
-        print("*"*90)
-        print(f"\nVitor (Voice) 🗣️: {prompt}")
-        response = self.llm.generate_response(prompt=prompt)
-        print(f"KaLLia (Voice) 🤖: {response}\n")
-        print("*"*90)
-
-        self.tts.convert_with_edge_tts(response)
-
-    def _run_in_background(self):
-        
-        prompt = "faça uma pergunta aleatória."
-
-        print("*"*90)
-        print(f"\nVitor (Mente) 🗣️: {prompt}")
-        response = self.llm.generate_response(prompt=prompt)
-        print(f"KaLLia (Voice) 🤖: {response}\n")
-        print("*"*90)
-
-        self.tts.convert_with_edge_tts(response)
-
-        time.sleep(500)
-
-
+        threading.Thread(target=self.skill_in_background, daemon=True).start()
+        self.generate()
 
 
 # ============ Execução ============ #

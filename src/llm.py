@@ -4,8 +4,8 @@ import json
 from dotenv import load_dotenv
 
 from agno.agent import Agent
-from agno.models.ollama import Ollama
 from agno.db.sqlite import SqliteDb
+from agno.models.ollama import Ollama
 from agno.tools.tavily import TavilyTools
 
 from .tools import knowledge, open_program, capture_screenshot
